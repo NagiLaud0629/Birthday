@@ -428,6 +428,10 @@
 
 <canvas id="confetti-canvas"></canvas>
 
+<audio id="birthdayAudio" loop preload="none">
+  <source src="happy_birthday.mp3" type="audio/mpeg">
+</audio>
+
 <div class="sky" id="sky">
   <div class="cloud" style="top:6%; width:260px; height:120px; animation-duration:66s;">
     <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="62" rx="44" ry="27" fill="#fff" opacity="0.92"/><ellipse cx="96" cy="44" rx="52" ry="34" fill="#fff" opacity="0.92"/><ellipse cx="146" cy="60" rx="40" ry="25" fill="#fff" opacity="0.92"/><ellipse cx="112" cy="70" rx="58" ry="22" fill="#fff" opacity="0.92"/></svg>
@@ -705,10 +709,41 @@
     }, 4500);
   });
 
-  {(<audio id="birthdayAudio" loop>
-    <source src="happy_birthday.mp3" type="audio/mpeg">
-    </audio>)}
-  
+  // ---------- Music button: play the real Happy Birthday song ----------
+  const musicBtn = document.getElementById('musicBtn');
+  const birthdayAudio = document.getElementById('birthdayAudio');
+  let isPlaying = false;
+
+  function setMusicBtnLabel(playing) {
+    musicBtn.innerHTML = playing
+      ? '<span class="num-badge">1</span>⏸ Pause Song'
+      : '<span class="num-badge">1</span>🎵 Play Happy Birthday Song';
+  }
+
+  musicBtn.addEventListener('click', () => {
+    if (!isPlaying) {
+      birthdayAudio.play().then(() => {
+        isPlaying = true;
+        setMusicBtnLabel(true);
+
+        // celebrate a little when the song starts
+        const cakeRect = document.querySelector('.cake-wrap').getBoundingClientRect();
+        burstConfetti(cakeRect.left + cakeRect.width / 2, cakeRect.top + cakeRect.height / 2, 60);
+      }).catch(() => {
+        // Autoplay/file might be blocked or missing — fail quietly.
+      });
+    } else {
+      birthdayAudio.pause();
+      isPlaying = false;
+      setMusicBtnLabel(false);
+    }
+  });
+
+  birthdayAudio.addEventListener('ended', () => {
+    isPlaying = false;
+    setMusicBtnLabel(false);
+  });
+
   // ---------- Side button: pop out balloons ----------
   const balloonColors = ['#ff9ecb', '#c9a6ff', '#8fe3c2', '#ffd76a'];
   function balloonSVG(color) {
@@ -727,13 +762,6 @@
       document.body.appendChild(b);
       b.addEventListener('animationend', () => b.remove());
     }
-  });
-
-
-
-    // celebrate a little when the song plays
-    const cakeRect = document.querySelector('.cake-wrap').getBoundingClientRect();
-    burstConfetti(cakeRect.left + cakeRect.width / 2, cakeRect.top + cakeRect.height / 2, 60);
   });
 </script>
 </body>
