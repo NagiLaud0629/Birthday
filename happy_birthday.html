@@ -605,8 +605,6 @@
     d.innerHTML = shapeFn(decoColors[i % decoColors.length]);
     sky.appendChild(d);
   }
-
-  // ---------- Confetti ----------
   const canvas = document.getElementById('confetti-canvas');
   const ctx = canvas.getContext('2d');
   function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
